@@ -1,0 +1,1121 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pizarra Digital - Ciencias Sociales Unidad 1 | Colegio Montano</title>
+    <!-- Carga de Tailwind CSS para utilidades responsivas y estructura -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Variables de Identidad Visual - Colegio Montano */
+        :root {
+            --azul-principal: #1269A8;
+            --amarillo-brillante: #F7D615;
+            --verde-grisaceo: #54887D;
+            --azul-claro: #88B5C7;
+            --verde-oliva: #A6B046;
+            --blanco-suave: #F2F5E9;
+            --texto-oscuro: #1e293b;
+        }
+
+        /* Tipografía Institucional */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #e2e8f0;
+            color: var(--texto-oscuro);
+            margin: 0;
+            padding: 12px;
+        }
+
+        /* Marco de Pizarra Digital */
+        .pizarra-frame {
+            background-color: var(--blanco-suave);
+            border: 5px solid var(--amarillo-brillante);
+            border-radius: 12px;
+            box-shadow: 0 12px 30px rgba(18, 105, 168, 0.25);
+            overflow: hidden;
+            max-width: 1280px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            min-height: 90vh;
+            transition: all 0.3s ease;
+        }
+
+        /* Ajuste en Modo Pantalla Completa */
+        :fullscreen .pizarra-frame {
+            max-width: 100%;
+            height: 100vh;
+            border-radius: 0;
+            border-width: 4px;
+        }
+
+        /* Encabezado de la Pizarra */
+        .pizarra-header {
+            background: linear-gradient(135deg, var(--azul-principal) 0%, #0d4f80 100%);
+            color: white;
+            border-bottom: 4px solid var(--amarillo-brillante);
+        }
+
+        /* Botón Pantalla Completa */
+        .btn-fullscreen {
+            background-color: var(--amarillo-brillante);
+            color: var(--azul-principal);
+            font-weight: 700;
+            border-radius: 8px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+
+        .btn-fullscreen:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            background-color: #ffe02e;
+        }
+
+        /* Navegación de Pestañas Horizontales */
+        .nav-tabs {
+            background-color: #ffffff;
+            border-bottom: 2px solid var(--azul-claro);
+            display: flex;
+            overflow-x: auto;
+            scrollbar-width: thin;
+        }
+
+        .tab-btn {
+            padding: 14px 20px;
+            font-weight: 700;
+            color: var(--verde-grisaceo);
+            border-bottom: 4px solid transparent;
+            white-space: nowrap;
+            transition: all 0.2s ease;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tab-btn:hover {
+            background-color: var(--blanco-suave);
+            color: var(--azul-principal);
+        }
+
+        .tab-btn.active {
+            background-color: var(--azul-principal);
+            color: #ffffff;
+            border-bottom: 4px solid var(--amarillo-brillante);
+        }
+
+        /* Tarjetas y Contenedores Pedagógicos */
+        .card-montano {
+            background-color: #ffffff;
+            border-left: 5px solid var(--verde-grisaceo);
+            border-radius: 10px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+            transition: transform 0.2s ease;
+        }
+
+        .card-montano:hover {
+            transform: translateY(-2px);
+        }
+
+        .card-ejercicio {
+            background-color: rgba(136, 181, 199, 0.22);
+            border: 1px solid var(--azul-claro);
+            border-radius: 10px;
+        }
+
+        /* Etiquetas de Nivel y Categoría */
+        .badge-oliva {
+            background-color: var(--verde-oliva);
+            color: #ffffff;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .badge-azul {
+            background-color: var(--azul-principal);
+            color: #ffffff;
+            font-weight: 700;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            font-size: 0.78rem;
+        }
+
+        .badge-amarillo {
+            background-color: var(--amarillo-brillante);
+            color: var(--azul-principal);
+            font-weight: 800;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            font-size: 0.8rem;
+        }
+
+        /* Botón Mostrar / Ocultar Solución */
+        .btn-solucion {
+            background-color: var(--azul-principal);
+            color: white;
+            font-weight: 600;
+            padding: 8px 16px;
+            border-radius: 8px;
+            transition: background-color 0.2s;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-solucion:hover {
+            background-color: var(--verde-grisaceo);
+        }
+
+        .caja-solucion {
+            background-color: #ffffff;
+            border-left: 4px solid var(--verde-oliva);
+            border-radius: 8px;
+            margin-top: 12px;
+            padding: 14px;
+            display: none;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+
+        .caja-solucion.visible {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Animación de secciones */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.35s ease;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- MARCO PRINCIPAL DE PIZARRA DIGITAL -->
+    <div id="pizarra" class="pizarra-frame">
+        
+        <!-- ENCABEZADO INSTITUCIONAL -->
+        <header class="pizarra-header p-4 md:p-6">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                <!-- Logo y Títulos -->
+                <div class="flex items-center gap-4">
+                    <div class="bg-white p-2 rounded-xl shadow-md shrink-0">
+                        <img 
+                            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQyEop0yf6lZ7Jk9MILZxF1rBj4Oqs5esyhIQ&s" 
+                            alt="Logo Colegio Montano" 
+                            class="h-14 w-14 md:h-16 md:w-16 object-contain"
+                            onerror="this.src='https://placehold.co/80x80/1269A8/F7D615?text=CM'"
+                        >
+                    </div>
+                    <div>
+                        <div class="flex flex-wrap items-center gap-2 mb-1">
+                            <span class="badge-amarillo">COLEGIO MONTANO</span>
+                            <span class="text-xs md:text-sm font-semibold text-blue-100 bg-white/10 px-2.5 py-0.5 rounded-full">
+                                📅 18 de Enero al 5 de Marzo
+                            </span>
+                        </div>
+                        <h1 class="text-xl md:text-2xl lg:text-3xl font-bold tracking-tight text-white">
+                            Ciencias Sociales — Dosificación Unidad 1
+                        </h1>
+                        <p class="text-sm md:text-base text-blue-100 mt-0.5">
+                            <strong>Grado:</strong> Primero Básico &nbsp;|&nbsp; <strong>Docente:</strong> Stephany Godoy &nbsp;|&nbsp; <strong>Zona Total:</strong> 100 Pts (4 Módulos × 25 Pts)
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Botón Pantalla Completa -->
+                <button id="btnFullscreen" onclick="toggleFullscreen()" class="btn-fullscreen px-4 py-2.5 text-sm md:text-base self-end md:self-center shrink-0 flex items-center gap-2">
+                    <span id="fsIcon">⛶</span>
+                    <span id="fsText">Pantalla completa</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- MENÚ DE PESTAÑAS HORIZONTALES INTERACTIVAS -->
+        <nav class="nav-tabs" role="tablist">
+            <button class="tab-btn active" onclick="openTab(event, 'teoria')">
+                <span>🌍</span> Teoría y Dosificación (4 Módulos)
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'ejemplos')">
+                <span>💡</span> Ejemplos Resueltos (15)
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'ejercicios')">
+                <span>✍️</span> Ejercicios Prácticos (15)
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'reflexion')">
+                <span>🧠</span> Reflexión Crítica
+            </button>
+            <button class="tab-btn" onclick="openTab(event, 'evaluacion')">
+                <span>✅</span> Evaluación Formativa
+            </button>
+        </nav>
+
+        <!-- CONTENIDO DEL LIENZO DE TRABAJO -->
+        <main class="p-4 md:p-8 flex-1 overflow-y-auto">
+
+            <!-- ===================================================================== -->
+            <!-- SECCIÓN 1: EXPLICACIÓN TEÓRICA Y DOSIFICACIÓN DE LOS 4 MÓDULOS        -->
+            <!-- ===================================================================== -->
+            <section id="teoria" class="tab-content active space-y-8">
+                
+                <!-- Banner Resumen de Estructura -->
+                <div class="bg-white p-5 rounded-xl border-2 border-[#54887D] shadow-sm">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 border-b border-gray-200 pb-4 mb-4">
+                        <div>
+                            <h2 class="text-xl md:text-2xl font-bold text-[#1269A8]">Planificación Didáctica y Cronograma de Evaluación</h2>
+                            <p class="text-sm text-gray-600 mt-1">Distribución académica de la Unidad 1 (7 semanas lectivas: 18 de enero al 5 de marzo).</p>
+                        </div>
+                        <div class="flex flex-wrap gap-2">
+                            <span class="badge-azul">4 Módulos</span>
+                            <span class="badge-oliva">25 Pts c/u</span>
+                            <span class="badge-amarillo">Total: 100 Pts</span>
+                        </div>
+                    </div>
+
+                    <!-- Leyenda de Modalidades de Trabajo -->
+                    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-2 text-xs font-semibold text-center">
+                        <div class="p-2 rounded-lg bg-blue-50 text-[#1269A8] border border-blue-200">👤 Trabajo Individual</div>
+                        <div class="p-2 rounded-lg bg-teal-50 text-[#54887D] border border-teal-200">👥 Trabajo en Equipo</div>
+                        <div class="p-2 rounded-lg bg-amber-50 text-amber-800 border border-amber-200">🚀 Proyecto</div>
+                        <div class="p-2 rounded-lg bg-lime-50 text-lime-800 border border-lime-300">🏆 Logro / Integrado</div>
+                        <div class="p-2 rounded-lg bg-purple-50 text-purple-800 border border-purple-200">🔄 Retroalimentación</div>
+                    </div>
+                </div>
+
+                <!-- GRID DE LOS 4 MÓDULOS (25 PTS CADA UNO) -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                    <!-- MÓDULO 1 -->
+                    <div class="card-montano p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="badge-azul">MÓDULO 1 • Semanas 1 y 2 (18 Ene - 29 Ene)</span>
+                                <span class="badge-amarillo">25 Puntos</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-[#1269A8] mb-2">Fundamentos de las Ciencias Sociales y Sistemas</h3>
+                            <p class="text-sm text-gray-700 mb-4 bg-[#F2F5E9] p-3 rounded-lg">
+                                <strong>Contenidos:</strong> Ciencias Sociales (objeto de estudio y disciplinas auxiliares); Tipos de sistemas (sociales, económicos, políticos, naturales); Fenómenos sociales.
+                            </p>
+                            
+                            <!-- Tabla de Actividades Módulo 1 -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-[#1269A8] text-white">
+                                            <th class="p-2 rounded-tl-lg">Actividad</th>
+                                            <th class="p-2">Modalidad</th>
+                                            <th class="p-2 text-right rounded-tr-lg">Pts</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="p-2 font-medium">1. Mapa radial de disciplinas de las Ciencias Sociales</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#1269A8]">👤 Individual</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">2. Matriz comparativa de tipos de sistemas en la sociedad</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#54887D]">👥 Equipo</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">3. Estudio de caso: Fenómenos sociales actuales en Guatemala</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-lime-700">🏆 Logro</span></td>
+                                            <td class="p-2 text-right font-bold">6 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">4. Maqueta / diagrama interactivo de un sistema social</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-amber-700">🚀 Proyecto</span></td>
+                                            <td class="p-2 text-right font-bold">6 pts</td>
+                                        </tr>
+                                        <tr class="bg-purple-50">
+                                            <td class="p-2 font-bold text-purple-900">5. Clínica de Retroalimentación: Foro de refuerzo conceptual</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-purple-800">🔄 Retroalim.</span></td>
+                                            <td class="p-2 text-right font-bold text-purple-900">3 pts</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-gray-200 flex justify-between items-center text-sm font-bold text-[#54887D]">
+                            <span>Subtotal Módulo 1:</span>
+                            <span>25 / 25 Puntos</span>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO 2 -->
+                    <div class="card-montano p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="badge-azul">MÓDULO 2 • Semanas 3 y 4 (01 Feb - 12 Feb)</span>
+                                <span class="badge-amarillo">25 Puntos</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-[#1269A8] mb-2">Metodología e Investigación Social</h3>
+                            <p class="text-sm text-gray-700 mb-4 bg-[#F2F5E9] p-3 rounded-lg">
+                                <strong>Contenidos:</strong> Metodología e investigación de fenómenos sociales; Investigación documental (fuentes primarias, secundarias y fichas); Exposición científica.
+                            </p>
+                            
+                            <!-- Tabla de Actividades Módulo 2 -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-[#1269A8] text-white">
+                                            <th class="p-2 rounded-tl-lg">Actividad</th>
+                                            <th class="p-2">Modalidad</th>
+                                            <th class="p-2 text-right rounded-tr-lg">Pts</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="p-2 font-medium">1. Fichero bibliográfico y hemerográfico (investigación documental)</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#1269A8]">👤 Individual</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">2. Diseño de protocolo básico de investigación social</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#54887D]">👥 Equipo</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">3. Informe preliminar de investigación sobre problemática juvenil</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-lime-700">🏆 Integrado</span></td>
+                                            <td class="p-2 text-right font-bold">6 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">4. Feria de Exposición Científica (póster y defensa oral)</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-amber-700">🚀 Proyecto</span></td>
+                                            <td class="p-2 text-right font-bold">6 pts</td>
+                                        </tr>
+                                        <tr class="bg-purple-50">
+                                            <td class="p-2 font-bold text-purple-900">5. Clínica de Retroalimentación: Rúbrica de validez de fuentes</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-purple-800">🔄 Retroalim.</span></td>
+                                            <td class="p-2 text-right font-bold text-purple-900">3 pts</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-gray-200 flex justify-between items-center text-sm font-bold text-[#54887D]">
+                            <span>Subtotal Módulo 2:</span>
+                            <span>25 / 25 Puntos</span>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO 3 -->
+                    <div class="card-montano p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="badge-azul">MÓDULO 3 • Semana 5 (15 Feb - 19 Feb)</span>
+                                <span class="badge-amarillo">25 Puntos</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-[#1269A8] mb-2">Geografía Política de América y Patrimonio Natural</h3>
+                            <p class="text-sm text-gray-700 mb-4 bg-[#F2F5E9] p-3 rounded-lg">
+                                <strong>Contenidos:</strong> Países y regiones de América (Norte, Centro, Caribe y Sur); Áreas protegidas (SIGAP, parques nacionales y reservas de biosfera).
+                            </p>
+                            
+                            <!-- Tabla de Actividades Módulo 3 -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-[#1269A8] text-white">
+                                            <th class="p-2 rounded-tl-lg">Actividad</th>
+                                            <th class="p-2">Modalidad</th>
+                                            <th class="p-2 text-right rounded-tr-lg">Pts</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="p-2 font-medium">1. Atlas cartográfico: Regiones, países y capitales de América</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#1269A8]">👤 Individual</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">2. Catálogo ilustrado de Áreas Protegidas de Guatemala y América</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#54887D]">👥 Equipo</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">3. Rally geográfico de ubicación regional y biodiversidad</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-lime-700">🏆 Logro</span></td>
+                                            <td class="p-2 text-right font-bold">6 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">4. Ruta ecoturística educativa por una reserva de biosfera</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-amber-700">🚀 Proyecto</span></td>
+                                            <td class="p-2 text-right font-bold">6 pts</td>
+                                        </tr>
+                                        <tr class="bg-purple-50">
+                                            <td class="p-2 font-bold text-purple-900">5. Clínica de Retroalimentación: Quiz interactivo de mapas</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-purple-800">🔄 Retroalim.</span></td>
+                                            <td class="p-2 text-right font-bold text-purple-900">3 pts</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-gray-200 flex justify-between items-center text-sm font-bold text-[#54887D]">
+                            <span>Subtotal Módulo 3:</span>
+                            <span>25 / 25 Puntos</span>
+                        </div>
+                    </div>
+
+                    <!-- MÓDULO 4 -->
+                    <div class="card-montano p-5 flex flex-col justify-between">
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <span class="badge-azul">MÓDULO 4 • Semanas 6 y 7 (22 Feb - 05 Mar)</span>
+                                <span class="badge-amarillo">25 Puntos</span>
+                            </div>
+                            <h3 class="text-lg font-bold text-[#1269A8] mb-2">Gestión Ambiental y Prevención de Riesgos</h3>
+                            <p class="text-sm text-gray-700 mb-4 bg-[#F2F5E9] p-3 rounded-lg">
+                                <strong>Contenidos:</strong> Protección del medio ambiente y desarrollo sostenible; Desastres naturales (origen geológico, hidrometeorológico y gestión del riesgo).
+                            </p>
+                            
+                            <!-- Tabla de Actividades Módulo 4 -->
+                            <div class="overflow-x-auto">
+                                <table class="w-full text-sm text-left border-collapse">
+                                    <thead>
+                                        <tr class="bg-[#1269A8] text-white">
+                                            <th class="p-2 rounded-tl-lg">Actividad</th>
+                                            <th class="p-2">Modalidad</th>
+                                            <th class="p-2 text-right rounded-tr-lg">Pts</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody class="divide-y divide-gray-200">
+                                        <tr>
+                                            <td class="p-2 font-medium">1. Auditoría de huella ecológica personal y familiar</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#1269A8]">👤 Individual</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">2. Plan escolar de mitigación ante desastres naturales</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-[#54887D]">👥 Equipo</span></td>
+                                            <td class="p-2 text-right font-bold">5 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">3. Campaña ambiental: Soluciones sostenibles para mi comunidad</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-amber-700">🚀 Proyecto</span></td>
+                                            <td class="p-2 text-right font-bold">6 pts</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="p-2 font-medium">4. Evaluación integradora de Unidad 1 (análisis de casos)</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-lime-700">🏆 Integrado</span></td>
+                                            <td class="p-2 text-right font-bold">6 pts</td>
+                                        </tr>
+                                        <tr class="bg-purple-50">
+                                            <td class="p-2 font-bold text-purple-900">5. Clínica de Retroalimentación: Portafolio y metacognición</td>
+                                            <td class="p-2"><span class="text-xs font-bold text-purple-800">🔄 Retroalim.</span></td>
+                                            <td class="p-2 text-right font-bold text-purple-900">3 pts</td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="mt-4 pt-2 border-t border-gray-200 flex justify-between items-center text-sm font-bold text-[#54887D]">
+                            <span>Subtotal Módulo 4:</span>
+                            <span>25 / 25 Puntos</span>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- SÍNTESIS TEÓRICA DE LOS TEMAS DE LA UNIDAD -->
+                <div class="bg-white p-6 rounded-xl border border-[#88B5C7] shadow-sm space-y-4">
+                    <h3 class="text-xl font-bold text-[#1269A8] border-b-2 border-[#F7D615] pb-2">
+                        📚 Síntesis Conceptual de Contenidos (Primero Básico)
+                    </h3>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm leading-relaxed">
+                        <div class="p-3 bg-[#F2F5E9] rounded-lg">
+                            <h4 class="font-bold text-[#54887D]">1. Ciencias Sociales, Sistemas y Fenómenos Sociales</h4>
+                            <p>Las <strong>Ciencias Sociales</strong> estudian al ser humano en sociedad (Historia, Geografía, Sociología, Economía, Antropología). Un <strong>sistema</strong> es un conjunto de elementos interrelacionados (sistemas abiertos, cerrados, sociales o ecológicos). Los <strong>fenómenos sociales</strong> son hechos colectivos creados por la interacción humana (migración, urbanización, cultura digital).</p>
+                        </div>
+                        <div class="p-3 bg-[#F2F5E9] rounded-lg">
+                            <h4 class="font-bold text-[#54887D]">2. Metodología, Investigación Documental y Exposición</h4>
+                            <p>La <strong>metodología social</strong> sigue pasos ordenados: planteamiento del problema, hipótesis, recolección de datos y conclusiones. La <strong>investigación documental</strong> recopila información en fuentes escritas o digitales confiables, culminando en una <strong>exposición científica</strong> clara, objetiva y respaldada por evidencias.</p>
+                        </div>
+                        <div class="p-3 bg-[#F2F5E9] rounded-lg">
+                            <h4 class="font-bold text-[#54887D]">3. Regiones de América y Áreas Protegidas</h4>
+                            <p>América se divide geográficamente en <strong>América del Norte, América Central, El Caribe y América del Sur</strong> (35 países soberanos). Las <strong>áreas protegidas</strong> son territorios legalmente resguardados para conservar la biodiversidad, el agua y el patrimonio cultural (ej. Reserva de la Biosfera Maya).</p>
+                        </div>
+                        <div class="p-3 bg-[#F2F5E9] rounded-lg">
+                            <h4 class="font-bold text-[#54887D]">4. Protección Ambiental y Desastres Naturales</h4>
+                            <p>La <strong>protección del medio ambiente</strong> busca el equilibrio entre desarrollo humano y conservación ecológica. Un <strong>fenómeno natural</strong> (sismo, huracán, erupción) se convierte en <strong>desastre</strong> cuando afecta a una población vulnerable sin medidas adecuadas de prevención y gestión del riesgo.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- SECCIÓN 2: EJEMPLOS RESUELTOS (5 BÁSICO, 5 INTERMEDIO, 5 AVANZADO)    -->
+            <!-- ===================================================================== -->
+            <section id="ejemplos" class="tab-content space-y-8">
+                <div class="bg-white p-5 rounded-xl border-l-4 border-[#1269A8]">
+                    <h2 class="text-2xl font-bold text-[#1269A8]">Ejemplos Resueltos Paso a Paso</h2>
+                    <p class="text-sm text-gray-600">15 modelos desarrollados progresivamente para dominar los contenidos de Ciencias Sociales.</p>
+                </div>
+
+                <!-- NIVEL BÁSICO -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="badge-oliva">Nivel Básico</span>
+                        <h3 class="text-lg font-bold text-[#54887D]">Identificación y Conceptos Fundamentales</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Básico 1 • Disciplinas de las Ciencias Sociales</span>
+                            <p class="font-semibold mt-1">¿Qué ciencia social estudia la distribución espacial de la población, el relieve y los recursos naturales de un territorio?</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> La <strong>Geografía</strong> (específicamente en sus ramas de Geografía Física y Geografía Humana).
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Básico 2 • Regiones de América</span>
+                            <p class="font-semibold mt-1">Ubica en su región geográfica americana a los siguientes países: <strong>Canadá, Guatemala, Cuba y Brasil</strong>.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> Canadá (<em>América del Norte</em>) | Guatemala (<em>América Central</em>) | Cuba (<em>América Insular o El Caribe</em>) | Brasil (<em>América del Sur</em>).
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Básico 3 • Tipos de Sistemas</span>
+                            <p class="font-semibold mt-1">Clasifica un <strong>bosque tropical</strong> y una <strong>escuela</strong> según su intercambio con el entorno (abierto o cerrado).</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> Ambos son <strong>sistemas abiertos</strong>: el bosque intercambia energía solar, agua y nutrientes; la escuela intercambia conocimiento, personas y recursos con la comunidad.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Básico 4 • Investigación Documental</span>
+                            <p class="font-semibold mt-1">Identifica si una <em>fotografía histórica original de 1944</em> es una fuente primaria o secundaria.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> Es una <strong>fuente primaria</strong> porque fue producida directamente en el momento histórico estudiado sin intermediarios.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4 md:col-span-2">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Básico 5 • Áreas Protegidas</span>
+                            <p class="font-semibold mt-1">¿Cuál es el objetivo principal de declarar un territorio como <strong>Área Protegida</strong>?</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> Conservar la diversidad biológica (flora y fauna), proteger fuentes hídricas, mantener el equilibrio climático y resguardar el patrimonio cultural asociado a dicho ecosistema.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NIVEL INTERMEDIO -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="badge-azul">Nivel Intermedio</span>
+                        <h3 class="text-lg font-bold text-[#54887D]">Análisis de Causas, Procesos y Metodología</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#54887D]">Ejemplo Intermedio 1 • Fenómenos Naturales vs. Desastres</span>
+                            <p class="font-semibold mt-1">Explica por qué una lluvia intensa en una zona despoblada no es un desastre, pero sí lo es en una colonia construida a la orilla de un barranco.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> La lluvia es un <strong>fenómeno natural</strong>. Se convierte en <strong>desastre</strong> únicamente cuando existe <em>vulnerabilidad humana</em> (viviendas en zonas de alto riesgo y falta de drenajes), generando pérdidas materiales o humanas.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#54887D]">Ejemplo Intermedio 2 • Fases de la Investigación Social</span>
+                            <p class="font-semibold mt-1">Ordena lógicamente los siguientes pasos metodológicos: <em>(a) Redacción de conclusiones, (b) Planteamiento del problema, (c) Recolección de datos documentales, (d) Formulación de hipótesis</em>.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> El orden científico correcto es: <strong>1° (b)</strong> Planteamiento del problema → <strong>2° (d)</strong> Formulación de hipótesis → <strong>3° (c)</strong> Recolección de datos documentales → <strong>4° (a)</strong> Redacción de conclusiones.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#54887D]">Ejemplo Intermedio 3 • Estructura de la Exposición Científica</span>
+                            <p class="font-semibold mt-1">¿Qué elementos visuales y discursivos debe incluir un estudiante de Primero Básico al presentar los resultados de su investigación documental?</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> Debe incluir: 1) Título y pregunta de investigación, 2) Gráficos o mapas sintetizados (sin saturar de texto), 3) Vocabulario técnico preciso, 4) Cita de fuentes consultadas y 5) Conclusiones verificables.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#54887D]">Ejemplo Intermedio 4 • Fenómenos Sociales</span>
+                            <p class="font-semibold mt-1">Analiza el fenómeno de la <strong>migración interna</strong> (del campo a la ciudad) identificando una causa económica y una consecuencia urbana.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> <strong>Causa económica:</strong> Búsqueda de mejores oportunidades laborales y acceso a servicios. <strong>Consecuencia urbana:</strong> Crecimiento acelerado de las ciudades y mayor demanda de transporte, vivienda y agua potable.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4 md:col-span-2">
+                            <span class="text-xs font-bold text-[#54887D]">Ejemplo Intermedio 5 • Protección del Medio Ambiente</span>
+                            <p class="font-semibold mt-1">Diferencia entre <strong>preservación</strong> y <strong>aprovechamiento sostenible</strong> dentro de la gestión ambiental.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-2.5 rounded">
+                                <strong>Resolución:</strong> La <strong>preservación</strong> busca mantener un ecosistema intacto sin intervención humana directa (ej. zona núcleo de un parque nacional); el <strong>aprovechamiento sostenible</strong> permite utilizar recursos naturales (ej. ecoturismo o manejo forestal certificado) garantizando su regeneración para futuras generaciones.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- NIVEL AVANZADO -->
+                <div class="space-y-4">
+                    <div class="flex items-center gap-2">
+                        <span class="badge-amarillo">Nivel Avanzado</span>
+                        <h3 class="text-lg font-bold text-[#54887D]">Integración Sistémica y Análisis Multidimensional</h3>
+                    </div>
+
+                    <div class="grid grid-cols-1 gap-4">
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Avanzado 1 • Interacción entre Sistemas Naturales y Sociales</span>
+                            <p class="font-semibold mt-1">Analiza cómo la deforestación en una cuenca hidrográfica de América Central conecta los conceptos de: <em>tipos de sistemas, protección ambiental y desastres naturales</em>.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-3 rounded">
+                                <strong>Resolución Integral:</strong> Una cuenca hidrográfica funciona como un <strong>sistema ecológico abierto</strong> donde el bosque retiene el agua de lluvia. Cuando el <strong>sistema económico/social</strong> tala los árboles sin control (falta de protección ambiental), el suelo pierde absorción; ante un huracán, el exceso de escorrentía provoca inundaciones y deslaves en las comunidades bajas, transformando una lluvia estacional en un <strong>desastre socioambiental</strong>.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Avanzado 2 • Diseño de Ficha de Investigación Documental</span>
+                            <p class="font-semibold mt-1">Elabora una ficha documental modelo para investigar sobre la <em>Reserva de la Biosfera Maya</em> combinando fuente institucional y análisis crítico.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-3 rounded">
+                                <strong>Resolución Integral:</strong> <br>
+                                • <strong>Tema:</strong> Conservación de Áreas Protegidas en América Central.<br>
+                                • <strong>Fuente:</strong> Consejo Nacional de Áreas Protegidas (CONAP), Informe Anual del SIGAP.<br>
+                                • <strong>Dato Clave:</strong> Representa más de 2 millones de hectáreas en Petén, Guatemala, albergando sitios arqueológicos mayas y especies en peligro como el jaguar.<br>
+                                • <strong>Análisis del estudiante:</strong> Su gestión exige equilibrar la vigilancia contra incendios forestales con la participación de concesiones forestales comunitarias.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Avanzado 3 • Comparación Regional de América</span>
+                            <p class="font-semibold mt-1">Compara la vulnerabilidad ante desastres naturales entre <strong>América Central / El Caribe</strong> frente a las llanuras centrales de <strong>América del Norte</strong>.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-3 rounded">
+                                <strong>Resolución Integral:</strong> <strong>América Central y El Caribe</strong> están ubicados en el Cinturón de Fuego del Pacífico y la ruta de huracanes del Atlántico, enfrentando alta sismicidad, vulcanismo y tormentas tropicales. En contraste, las llanuras centrales de <strong>América del Norte</strong> presentan baja actividad volcánica, pero son altamente vulnerables a tornados, ventiscas invernales y sequías agrícolas.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Avanzado 4 • Evaluación de Validez en Exposición Científica</span>
+                            <p class="font-semibold mt-1">Un grupo expone sobre "La contaminación de los ríos en América" citando únicamente comentarios anónimos de redes sociales. ¿Por qué su exposición carece de rigor científico y cómo deben corregirla?</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-3 rounded">
+                                <strong>Resolución Integral:</strong> Carece de rigor porque las opiniones anónimas no son <strong>fuentes documentales verificables</strong> ni siguen una metodología científica. Para corregirla, deben sustituir esas opiniones por informes de ministerios de ambiente, estudios universitarios, datos estadísticos de calidad del agua y leyes ambientales vigentes.
+                            </p>
+                        </div>
+
+                        <div class="card-montano p-4">
+                            <span class="text-xs font-bold text-[#1269A8]">Ejemplo Avanzado 5 • Enfoque Interdisciplinario de un Fenómeno Social</span>
+                            <p class="font-semibold mt-1">Explica cómo tres disciplinas de las Ciencias Sociales analizarían el fenómeno del <strong>crecimiento del comercio electrónico</strong> en América Latina.</p>
+                            <p class="text-sm text-gray-700 mt-2 bg-[#F2F5E9] p-3 rounded">
+                                <strong>Resolución Integral:</strong> <br>
+                                1) <strong>Economía:</strong> Analiza el aumento de transacciones digitales, empleo logístico e impacto en comercios locales.<br>
+                                2) <strong>Sociología:</strong> Estudia los nuevos hábitos de consumo y la brecha digital entre zonas urbanas y rurales.<br>
+                                3) <strong>Geografía Humana:</strong> Examina las rutas de distribución y el impacto ambiental de los empaques y el transporte.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- SECCIÓN 3: EJERCICIOS PRÁCTICOS (15 EJERCICIOS PARA EL ESTUDIANTE)    -->
+            <!-- ===================================================================== -->
+            <section id="ejercicios" class="tab-content space-y-8">
+                <div class="bg-white p-5 rounded-xl border-l-4 border-[#54887D] flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <div>
+                        <h2 class="text-2xl font-bold text-[#1269A8]">Taller de Ejercicios Prácticos</h2>
+                        <p class="text-sm text-gray-600">Resuelve cada actividad en tu cuaderno o pizarra y comprueba tus respuestas paso a paso.</p>
+                    </div>
+                    <span class="badge-oliva">15 Ejercicios Graduados</span>
+                </div>
+
+                <!-- BLOQUE BÁSICO (1 - 5) -->
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-[#1269A8] border-b border-gray-300 pb-1">🟢 Nivel Básico (Ejercicios 1 al 5)</h3>
+                    
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 1 (Objeto de las Ciencias Sociales):</p>
+                        <p class="text-sm mt-1">¿Cuál es la diferencia fundamental entre las <strong>Ciencias Naturales</strong> y las <strong>Ciencias Sociales</strong>?</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs1', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs1" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> Las <strong>Ciencias Naturales</strong> estudian los fenómenos físicos, químicos y biológicos de la naturaleza (ej. Biología, Física), mientras que las <strong>Ciencias Sociales</strong> estudian el comportamiento, la organización, la historia y las relaciones de los seres humanos en sociedad.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 2 (Regiones de América):</p>
+                        <p class="text-sm mt-1">Menciona <strong>dos países</strong> que pertenezcan a <em>América del Sur</em> y <strong>dos países</strong> que pertenezcan a <em>América Central</em>.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs2', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs2" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> <em>América del Sur:</em> Colombia, Perú, Argentina, Chile, Brasil (cualquiera de los 12 países). <em>América Central:</em> Guatemala, Belice, El Salvador, Honduras, Nicaragua, Costa Rica, Panamá.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 3 (Tipos de Sistemas):</p>
+                        <p class="text-sm mt-1">Identifica si los siguientes ejemplos corresponden a un <strong>sistema natural</strong> o a un <strong>sistema artificial/social</strong>: a) Sistema educativo &nbsp;|&nbsp; b) Arrecife de coral &nbsp;|&nbsp; c) Sistema de transporte público.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs3', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs3" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> a) Sistema social/artificial | b) Sistema natural | c) Sistema artificial/social.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 4 (Desastres Naturales):</p>
+                        <p class="text-sm mt-1">Clasifica los siguientes eventos según su origen (<strong>geológico</strong> o <strong>hidrometeorológico</strong>): <em>terremoto, huracán, erupción volcánica, inundación</em>.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs4', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs4" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> <em>Origen geológico (interior de la Tierra):</em> terremoto y erupción volcánica. <em>Origen hidrometeorológico (atmósfera y agua):</em> huracán e inundación.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 5 (Investigación Documental):</p>
+                        <p class="text-sm mt-1">Menciona 3 ejemplos de documentos donde puedes realizar una <strong>investigación documental</strong>.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs5', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs5" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> Libros especializados, revistas científicas o periódicos (hemeroteca), archivos históricos, mapas oficiales, leyes y bases de datos académicas digitales.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE INTERMEDIO (6 - 10) -->
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-[#1269A8] border-b border-gray-300 pb-1">🟡 Nivel Intermedio (Ejercicios 6 al 10)</h3>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 6 (Áreas Protegidas de Guatemala):</p>
+                        <p class="text-sm mt-1">Menciona el nombre de <strong>dos áreas protegidas</strong> de Guatemala e indica en qué departamento se ubican.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs6', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs6" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> 1) <em>Parque Nacional Tikal / Reserva de la Biosfera Maya</em> (Petén). 2) <em>Reserva de Usos Múltiples Cuenca del Lago de Atitlán</em> (Sololá) o <em>Monumento Natural Semuc Champey</em> (Alta Verapaz).
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 7 (Fenómenos Sociales):</p>
+                        <p class="text-sm mt-1">¿Por qué se afirma que el <strong>uso masivo de redes sociales en adolescentes</strong> es un fenómeno social y no un fenómeno biológico?</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs7', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs7" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> Porque surge de la interacción cultural, tecnológica y comunicativa entre grupos humanos, modificando sus normas de convivencia, lenguaje y relaciones, y no de un proceso orgánico o genético.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 8 (Metodología de Investigación):</p>
+                        <p class="text-sm mt-1">Formula una <strong>pregunta de investigación</strong> clara y delimitada sobre el manejo de desechos sólidos en tu colegio.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs8', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs8" class="caja-solucion text-sm">
+                            <strong>Solución Modelo:</strong> <em>"¿De qué manera la implementación de estaciones de reciclaje clasificado reduce la cantidad de residuos plásticos generados por los estudiantes de Primero Básico durante el primer trimestre del año?"</em>
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 9 (Protección del Medio Ambiente):</p>
+                        <p class="text-sm mt-1">Explica en qué consiste la regla de las <strong>3R (Reducir, Reutilizar y Reciclar)</strong> y cuál de las tres tiene mayor impacto preventivo.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs9', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs9" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> <em>Reducir</em> disminuye el consumo innecesario; <em>Reutilizar</em> da nueva vida útil a los objetos; <em>Reciclar</em> transforma residuos en nueva materia prima. <strong>Reducir</strong> tiene mayor impacto porque evita desde el origen la extracción de recursos y la generación de basura.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 10 (Exposición Científica):</p>
+                        <p class="text-sm mt-1">Identifica qué parte de la exposición científica falta en el siguiente esquema: <em>1. Introducción y objetivo → 2. Metodología utilizada → 3. ________________ → 4. Conclusiones y bibliografía</em>.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs10', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs10" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> Falta el apartado <strong>3. Presentación y análisis de resultados</strong> (donde se exponen los hallazgos, datos y evidencias obtenidas).
+                        </div>
+                    </div>
+                </div>
+
+                <!-- BLOQUE AVANZADO (11 - 15) -->
+                <div class="space-y-3">
+                    <h3 class="text-lg font-bold text-[#1269A8] border-b border-gray-300 pb-1">🔴 Nivel Avanzado (Ejercicios 11 al 15)</h3>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 11 (Gestión del Riesgo):</p>
+                        <p class="text-sm mt-1">Diferencia entre las acciones de <strong>prevención (antes)</strong>, <strong>respuesta (durante)</strong> y <strong>rehabilitación (después)</strong> ante un sismo de gran magnitud.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs11', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs11" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> <em>Antes (Prevención):</em> Simulacros, mochila de las 72 horas y construcción sismorresistente. <em>Durante (Respuesta):</em> Mantener la calma, alejarse de ventanas y evacuar hacia puntos de reunión. <em>Después (Rehabilitación):</em> Evaluación de daños estructurales, atención médica y restablecimiento de servicios básicos.
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 12 (Teoría de Sistemas aplicada a la Sociedad):</p>
+                        <p class="text-sm mt-1">Explica el concepto de <strong>interdependencia sistémica</strong> usando como ejemplo una crisis en el sistema de transporte público de una ciudad.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs12', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs12" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> En un sistema, cuando falla un componente se afectan los demás: si se paraliza el transporte público, los trabajadores llegan tarde (impacto en el <em>sistema económico</em>), los estudiantes pierden clases (<em>sistema educativo</em>) y aumenta el tráfico vehicular y la contaminación (<em>sistema ambiental</em>).
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 13 (Geopolítica y Regiones de América):</p>
+                        <p class="text-sm mt-1">Explica la diferencia entre dividir América bajo un criterio <strong>geográfico-físico</strong> frente a un criterio <strong>histórico-cultural</strong>.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs13', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs13" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> Bajo el criterio <em>geográfico-físico</em> se divide por placas y masas continentales (Norte, Centro, Caribe y Sur). Bajo el criterio <em>histórico-cultural</em> se divide en <strong>América Anglosajona</strong> (predominio histórico inglés/francés, EE. UU. y Canadá) y <strong>América Latina</strong> (países de lenguas romances como español y portugués, desde México hasta Argentina).
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 14 (Crítica de Fuentes Documentales):</p>
+                        <p class="text-sm mt-1">Tienes dos textos sobre un área protegida: Texto A es un blog anónimo sin fecha; Texto B es un artículo científico publicado en 2025 por una universidad. Menciona 3 criterios metodológicos para elegir el Texto B.</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs14', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs14" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> 1) <em>Autoridad y respaldo institucional</em> (universidad vs. anónimo), 2) <em>Actualidad</em> (fecha de publicación 2025), y 3) <em>Rigor y verificabilidad</em> (revisión científica y referencias comprobables).
+                        </div>
+                    </div>
+
+                    <div class="card-ejercicio p-4">
+                        <p class="font-bold text-[#1269A8]">Ejercicio 15 (Desarrollo Sostenible):</p>
+                        <p class="text-sm mt-1">¿Por qué el <strong>desarrollo sostenible</strong> exige equilibrar tres dimensiones (económica, social y ambiental) al administrar un área protegida?</p>
+                        <button class="btn-solucion mt-3 text-xs" onclick="toggleSolucion('sol-cs15', this)">👁️ Mostrar solución</button>
+                        <div id="sol-cs15" class="caja-solucion text-sm">
+                            <strong>Solución:</strong> Porque si solo se protege el ambiente prohibiendo toda actividad sin apoyar a las comunidades locales (dimensión social y económica), aumenta la pobreza y la tala ilegal; al integrar ecoturismo o manejo sostenible, las comunidades protegen el bosque porque obtienen bienestar digno de él.
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- SECCIÓN 4: PREGUNTAS DE REFLEXIÓN CRÍTICA                             -->
+            <!-- ===================================================================== -->
+            <section id="reflexion" class="tab-content space-y-6">
+                <div class="bg-white p-6 rounded-xl border-l-4 border-[#F7D615] shadow-sm">
+                    <h2 class="text-2xl font-bold text-[#1269A8]">Preguntas de Reflexión Crítica y Pensamiento Lógico</h2>
+                    <p class="text-sm text-gray-600 mt-1">Cuestionamientos abiertos para debate en clase, foros de Canvas o bitácora reflexiva.</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="card-montano p-5 space-y-3">
+                        <span class="badge-azul">1. Ética Ambiental y Territorio</span>
+                        <h3 class="text-lg font-bold text-[#1269A8]">¿Son realmente "naturales" los desastres?</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            En Ciencias Sociales se afirma que <em>"los fenómenos son naturales, pero los desastres son socialmente construidos"</em>. Reflexiona: ¿Qué responsabilidad tienen la planificación urbana, la pobreza y la deforestación en el impacto que deja un huracán o un deslizamiento de tierra en América Latina?
+                        </p>
+                    </div>
+
+                    <div class="card-montano p-5 space-y-3">
+                        <span class="badge-oliva">2. Pensamiento Científico</span>
+                        <h3 class="text-lg font-bold text-[#1269A8]">Investigación documental en la era de la desinformación</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            Hoy en día cualquier persona puede publicar información en internet en segundos. ¿Por qué aprender metodología de investigación documental y rigor en la exposición científica te convierte en un ciudadano más libre y difícil de manipular?
+                        </p>
+                    </div>
+
+                    <div class="card-montano p-5 space-y-3">
+                        <span class="badge-azul">3. Conciencia Ecológica</span>
+                        <h3 class="text-lg font-bold text-[#1269A8]">El futuro de las Áreas Protegidas</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            Guatemala y el continente americano albergan algunos de los pulmones ecológicos más importantes del planeta. ¿Cómo podemos lograr que los jóvenes de Primero Básico valoren las áreas protegidas no como lugares lejanos, sino como fuentes directas del agua y el aire que respiramos cada día?
+                        </p>
+                    </div>
+
+                    <div class="card-montano p-5 space-y-3">
+                        <span class="badge-oliva">4. Visión Sistémica</span>
+                        <h3 class="text-lg font-bold text-[#1269A8]">Todo está conectado en la sociedad</h3>
+                        <p class="text-sm text-gray-700 leading-relaxed">
+                            Analiza tu propia comunidad como un sistema: ¿De qué manera una decisión tomada en el sistema económico o político (por ejemplo, el precio del combustible o la gestión de la basura) transforma la vida cotidiana de las familias?
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===================================================================== -->
+            <!-- SECCIÓN 5: EVALUACIÓN FORMATIVA CON SOLUCIONES OCULTAS                 -->
+            <!-- ===================================================================== -->
+            <section id="evaluacion" class="tab-content space-y-6">
+                <div class="bg-white p-5 rounded-xl border-2 border-[#1269A8] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                    <div>
+                        <h2 class="text-2xl font-bold text-[#1269A8]">Evaluación Formativa de Comprobación (Unidad 1)</h2>
+                        <p class="text-sm text-gray-600">Resuelve cada problema de aplicación social y verifica tu procedimiento desplegando la solución.</p>
+                    </div>
+                    <span class="badge-amarillo">5 Reactivos Integradores</span>
+                </div>
+
+                <div class="space-y-4">
+                    <!-- REACTIVO 1 -->
+                    <div class="card-ejercicio p-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="badge-azul">Reactivo 1 • Ciencias Sociales y Fenómenos Sociales</span>
+                            <span class="text-xs font-bold text-[#54887D]">Valor sugerido: 20%</span>
+                        </div>
+                        <p class="font-semibold text-gray-800">Lee el siguiente caso y responde: Un grupo de investigadores analiza cómo el cierre de fábricas en una región provocó la migración de 5,000 familias hacia la capital y el surgimiento de nuevos asentamientos urbanos. (a) ¿Qué fenómeno social ocurre? (b) ¿Qué dos ciencias sociales deben trabajar juntas para explicarlo?</p>
+                        <button class="btn-solucion mt-2 text-sm" onclick="toggleSolucion('sol-cseval1', this)">
+                            👁️ Mostrar solución
+                        </button>
+                        <div id="sol-cseval1" class="caja-solucion text-sm space-y-1">
+                            <p><strong>Paso 1 (Fenómeno social):</strong> Ocurre la <strong>migración interna</strong> (movilidad humana campo-ciudad) y el <strong>crecimiento urbano acelerado</strong>.</p>
+                            <p><strong>Paso 2 (Ciencias sociales):</strong> La <strong>Economía</strong> (analiza el cierre de fábricas y el desempleo) junto con la <strong>Sociología</strong> o la <strong>Geografía Humana</strong> (estudian el desplazamiento poblacional y la reorganización del espacio urbano).</p>
+                        </div>
+                    </div>
+
+                    <!-- REACTIVO 2 -->
+                    <div class="card-ejercicio p-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="badge-azul">Reactivo 2 • Metodología e Investigación Documental</span>
+                            <span class="text-xs font-bold text-[#54887D]">Valor sugerido: 20%</span>
+                        </div>
+                        <p class="font-semibold text-gray-800">En la Semana 4 (Módulo 2), debes preparar una <strong>exposición científica</strong> sobre la contaminación del Lago de Amatitlán. Indica: (a) Una fuente primaria documental que usarías, (b) Una fuente secundaria, y (c) La diferencia entre plantear una hipótesis y redactar una conclusión.</p>
+                        <button class="btn-solucion mt-2 text-sm" onclick="toggleSolucion('sol-cseval2', this)">
+                            👁️ Mostrar solución
+                        </button>
+                        <div id="sol-cseval2" class="caja-solucion text-sm space-y-1">
+                            <p><strong>a) Fuente primaria:</strong> Datos directos de monitoreo de calidad del agua publicados por AMSA o fotografías satelitales originales del lago.</p>
+                            <p><strong>b) Fuente secundaria:</strong> Un reportaje periodístico o libro de texto que resume la historia ambiental del lago.</p>
+                            <p><strong>c) Diferencia metodológica:</strong> La <em>hipótesis</em> es una suposición fundamentada que se formula <strong>antes</strong> de investigar para guiar el estudio; la <em>conclusión</em> es la respuesta comprobada <strong>después</strong> de analizar toda la evidencia documental.</p>
+                        </div>
+                    </div>
+
+                    <!-- REACTIVO 3 -->
+                    <div class="card-ejercicio p-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="badge-azul">Reactivo 3 • Geografía de América y Áreas Protegidas</span>
+                            <span class="text-xs font-bold text-[#54887D]">Valor sugerido: 20%</span>
+                        </div>
+                        <p class="font-semibold text-gray-800">Relaciona correctamente cada área protegida emblemática con su región de América: <br>1) Parque Nacional Yellowstone &nbsp;|&nbsp; 2) Parque Nacional Tikal &nbsp;|&nbsp; 3) Parque Nacional Galápagos.</p>
+                        <button class="btn-solucion mt-2 text-sm" onclick="toggleSolucion('sol-cseval3', this)">
+                            👁️ Mostrar solución
+                        </button>
+                        <div id="sol-cseval3" class="caja-solucion text-sm space-y-1">
+                            <p><strong>1) Parque Nacional Yellowstone:</strong> Ubicado en Estados Unidos → <strong>América del Norte</strong>.</p>
+                            <p><strong>2) Parque Nacional Tikal:</strong> Ubicado en Petén, Guatemala → <strong>América Central</strong>.</p>
+                            <p><strong>3) Parque Nacional Galápagos:</strong> Ubicado en Ecuador → <strong>América del Sur</strong>.</p>
+                        </div>
+                    </div>
+
+                    <!-- REACTIVO 4 -->
+                    <div class="card-ejercicio p-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="badge-azul">Reactivo 4 • Tipos de Sistemas</span>
+                            <span class="text-xs font-bold text-[#54887D]">Valor sugerido: 20%</span>
+                        </div>
+                        <p class="font-semibold text-gray-800">Identifica los tres elementos básicos de todo sistema (<strong>Entrada / Input, Proceso y Salida / Output</strong>) aplicados a una <em>planta de tratamiento y reciclaje de residuos sólidos</em>.</p>
+                        <button class="btn-solucion mt-2 text-sm" onclick="toggleSolucion('sol-cseval4', this)">
+                            👁️ Mostrar solución
+                        </button>
+                        <div id="sol-cseval4" class="caja-solucion text-sm space-y-1">
+                            <p><strong>1) Entrada (Input):</strong> Desechos plásticos, papel, vidrio, energía eléctrica y trabajo humano.</p>
+                            <p><strong>2) Proceso:</strong> Clasificación, limpieza, trituración y fundición de los materiales reciclables.</p>
+                            <p><strong>3) Salida (Output):</strong> Nueva materia prima reutilizable y reducción de contaminación ambiental.</p>
+                        </div>
+                    </div>
+
+                    <!-- REACTIVO 5 -->
+                    <div class="card-ejercicio p-5">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="badge-azul">Reactivo 5 • Protección Ambiental y Desastres Naturales</span>
+                            <span class="text-xs font-bold text-[#54887D]">Valor sugerido: 20%</span>
+                        </div>
+                        <p class="font-semibold text-gray-800">En una comunidad costera del Pacífico de América Central existe amenaza constante de tsunamis e inundaciones. Propón <strong>dos medidas concretas de protección ambiental</strong> que al mismo tiempo funcionen como barrera natural contra desastres.</p>
+                        <button class="btn-solucion mt-2 text-sm" onclick="toggleSolucion('sol-cseval5', this)">
+                            👁️ Mostrar solución
+                        </button>
+                        <div id="sol-cseval5" class="caja-solucion text-sm space-y-1">
+                            <p><strong>Medida 1 (Reforestación de manglares):</strong> Los bosques de mangle absorben la energía del oleaje y reducen el impacto de marejadas e inundaciones costeras, a la vez que sirven de hábitat marino.</p>
+                            <p><strong>Medida 2 (Prohibición de tala en riberas de ríos y limpieza de cauces):</strong> Mantiene el suelo firme evitando deslaves y permite que el agua fluya sin desbordarse hacia las viviendas.</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- PIE DE PIZARRA INSTITUCIONAL -->
+        <footer class="bg-white border-t border-gray-200 px-6 py-3 text-xs text-gray-500 flex flex-col sm:flex-row justify-between items-center gap-2">
+            <span><strong>Colegio Montano</strong> • Plataforma Educativa Canvas</span>
+            <span>Docente: Stephany Godoy • Ciencias Sociales (Primero Básico)</span>
+        </footer>
+
+    </div>
+
+    <!-- LÓGICA INTERACTIVA (PESTAÑAS, SOLUCIONES Y FULLSCREEN API) -->
+    <script>
+        /**
+         * Cambia dinámicamente entre las pestañas horizontales de la pizarra.
+         * @param {Event} evt - Evento de clic del botón.
+         * @param {string} tabId - ID de la sección a mostrar.
+         */
+        function openTab(evt, tabId) {
+            const tabContents = document.getElementsByClassName("tab-content");
+            for (let i = 0; i < tabContents.length; i++) {
+                tabContents[i].classList.remove("active");
+            }
+
+            const tabButtons = document.getElementsByClassName("tab-btn");
+            for (let i = 0; i < tabButtons.length; i++) {
+                tabButtons[i].classList.remove("active");
+            }
+
+            document.getElementById(tabId).classList.add("active");
+            evt.currentTarget.classList.add("active");
+        }
+
+        /**
+         * Alterna la visibilidad de las cajas de solución paso a paso.
+         * @param {string} idSolucion - ID del contenedor de la solución.
+         * @param {HTMLElement} btn - Botón presionado para actualizar su etiqueta.
+         */
+        function toggleSolucion(idSolucion, btn) {
+            const caja = document.getElementById(idSolucion);
+            const estaVisible = caja.classList.contains("visible");
+
+            if (estaVisible) {
+                caja.classList.remove("visible");
+                btn.innerHTML = "👁️ Mostrar solución";
+                btn.style.backgroundColor = "#1269A8";
+            } else {
+                caja.classList.add("visible");
+                btn.innerHTML = "🙈 Ocultar solución";
+                btn.style.backgroundColor = "#54887D";
+            }
+        }
+
+        /**
+         * Activa o desactiva el modo pantalla completa usando Fullscreen API.
+         */
+        function toggleFullscreen() {
+            const fsText = document.getElementById("fsText");
+            const fsIcon = document.getElementById("fsIcon");
+
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen().then(() => {
+                    fsText.textContent = "Salir de pantalla completa";
+                    fsIcon.textContent = "✖";
+                }).catch((err) => {
+                    console.warn("No se pudo activar pantalla completa:", err.message);
+                });
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen().then(() => {
+                        fsText.textContent = "Pantalla completa";
+                        fsIcon.textContent = "⛶";
+                    });
+                }
+            }
+        }
+
+        // Sincronizar texto del botón si el usuario sale con la tecla ESC
+        document.addEventListener("fullscreenchange", () => {
+            const fsText = document.getElementById("fsText");
+            const fsIcon = document.getElementById("fsIcon");
+            if (!document.fullscreenElement) {
+                fsText.textContent = "Pantalla completa";
+                fsIcon.textContent = "⛶";
+            }
+        });
+    </script>
+</body>
+</html>
